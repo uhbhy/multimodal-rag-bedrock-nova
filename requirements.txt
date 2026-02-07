@@ -1,0 +1,20 @@
+# AWS SDK
+boto3>=1.34.0
+botocore>=1.34.0
+
+# PDF Processing
+tabula-py>=2.9.0
+PyMuPDF>=1.23.0   # provides both pymupdf + fitz
+
+# Vector Search
+faiss-cpu>=1.7.4
+
+# ML / Numerical
+numpy>=1.24.0
+
+# LangChain (text splitting only)
+langchain-text-splitters>=0.0.1
+
+# Utilities
+tqdm>=4.66.0
+requests>=2.31.0
