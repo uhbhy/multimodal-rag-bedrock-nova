@@ -1,126 +1,155 @@
-Multimodal RAG on AWS (Bedrock + Nova)
+# Multimodal RAG on AWS (Bedrock + Nova)
 
-A production-style multimodal Retrieval-Augmented Generation (RAG) system built on AWS.
-The system ingests PDFs containing text, images, and tables, embeds them using AWS Titan, retrieves relevant context via FAISS, and generates grounded answers using Amazon Nova.
+A **production-style multimodal Retrieval-Augmented Generation (RAG)** system built entirely on **AWS**.  
+This system ingests PDFs containing **text, images, and tables**, embeds them using **AWS Titan**, retrieves relevant context via **FAISS**, and generates **grounded multimodal answers** using **Amazon Nova** through **AWS Bedrock**.
 
-✨ Key Highlights
+---
 
-📄 Multimodal PDF ingestion (text, images, tables)
+## ✨ Key Highlights
 
-🧠 RAG-only architecture (no agents, deterministic retrieval)
+- 📄 Multimodal PDF ingestion (text, images, tables)  
+- 🧠 Pure RAG architecture (no agents, deterministic retrieval)  
+- 🧩 Modality-aware chunking and indexing  
+- 🔍 FAISS-powered similarity search  
+- 🤖 Multimodal prompting with Amazon Nova  
+- ☁️ Built entirely on AWS Bedrock–compatible components  
 
-🧩 Modality-aware chunking and indexing
+---
 
-🔍 FAISS-powered similarity search
+## 🧱 System Architecture
 
-🤖 Multimodal prompting with Amazon Nova
+The architecture is split into two clear stages: **Indexing** and **Query & Generation**, making the end-to-end flow easy to reason about and debug.
 
-☁️ Built entirely on AWS Bedrock-compatible components
-
-🧱 System Architecture
-
-The diagram below shows both indexing-time and query-time flows, making the system easy to understand at a glance.
-
-```` ```mermaid ````
+```mermaid
 flowchart LR
-    %% =======================
-    %% Indexing Pipeline
-    %% =======================
-    subgraph Indexing["📦 Indexing Pipeline"]
-        A[PDF Documents] --> B[Multimodal Ingestion]
 
-        B --> T[Text Extraction]
-        B --> I[Image Extraction]
-        B --> Tb[Table Extraction]
+%% =======================
+%% Indexing Pipeline
+%% =======================
+subgraph Indexing["📦 Indexing Pipeline"]
+    A[PDF Documents] --> B[Multimodal Ingestion]
 
-        T --> C[Chunking & Normalization]
-        I --> C
-        Tb --> C
+    B --> T[Text Extraction]
+    B --> I[Image Extraction]
+    B --> Tb[Table Extraction]
 
-        C --> E[Embeddings<br/>AWS Titan]
-        E --> V[FAISS Vector Store]
-    end
+    T --> C[Chunking & Normalization]
+    I --> C
+    Tb --> C
 
-    %% =======================
-    %% Query Pipeline
-    %% =======================
-    subgraph Query["🔎 Query & Generation Pipeline"]
-        Q[User Query] --> R[Similarity Retrieval]
-        R --> P[Multimodal Prompt Assembly]
-        P --> N[Amazon Nova]
-        N --> O[Final Answer]
-    end
+    C --> E[Embeddings<br/>AWS Titan]
+    E --> V[FAISS Vector Store]
+end
 
-    %% =======================
-    %% Shared Connections
-    %% =======================
-    V --> R
- ```` ``` ````
+%% =======================
+%% Query Pipeline
+%% =======================
+subgraph Query["🔎 Query & Generation Pipeline"]
+    Q[User Query] --> R[Similarity Retrieval]
+    R --> P[Multimodal Prompt Assembly]
+    P --> N[Amazon Nova]
+    N --> O[Final Answer]
+end
+
+%% =======================
+
+```
+---
 🧠 Architecture Walkthrough
 1. Multimodal Ingestion
 
-PDF documents are parsed using best-in-class tools for each modality:
+PDF documents are parsed using best-in-class tools tailored to each modality:
 
-Text → LangChain loaders
+-Text → LangChain PDF loaders
 
-Images → PyMuPDF
+-Images → PyMuPDF
 
-Tables → Tabula
+-Tables → Tabula
 
-Each modality is extracted independently to preserve semantic structure.
+Each modality is extracted independently to preserve semantic structure and reduce cross-modality noise.
 
 2. Chunking & Embeddings
 
-All extracted content is:
+All extracted content undergoes the following steps:
 
-Normalized
+-Normalization
 
-Chunked (recursive, overlapping where needed)
+-Recursive chunking (with overlap where necessary)
 
-Embedded using AWS Titan Embeddings
+-Embedding via AWS Titan Embeddings
 
-This ensures high-quality retrieval across different content types.
+This design ensures high-quality semantic retrieval across textual, visual, and tabular content.
 
 3. Vector Storage & Retrieval
 
-Embeddings are stored in a FAISS vector database
+-Embeddings are stored in a FAISS vector database
 
-Queries perform similarity search to retrieve the most relevant chunks
+-User queries are embedded and used for similarity search
+
+-The most relevant multimodal chunks are retrieved for generation
+
+FAISS enables fast, local retrieval with minimal overhead.
 
 4. Multimodal Generation
 
-Retrieved chunks are assembled into a multimodal prompt and passed to:
+-Retrieved chunks are assembled into a multimodal prompt
 
-Amazon Nova (via AWS Bedrock)
+-The prompt is passed to Amazon Nova via AWS Bedrock
 
-Nova reasons over text + visual context to generate grounded answers.
+-Nova reasons over text + visual context to generate grounded answers
+
+This approach minimizes hallucinations while preserving rich contextual understanding.
+
+---
 
 🧰 Tech Stack
-Layer	Technology
-PDF Parsing	LangChain, PyMuPDF, Tabula
-Embeddings	AWS Titan
-Vector Store	FAISS
-LLM	Amazon Nova
-Platform	AWS Bedrock
-Language	Python
+
+Layer	            Technology
+PDF Parsing	        LangChain, PyMuPDF, Tabula
+Embeddings	        AWS Titan
+Vector Store	    FAISS
+LLM	                Amazon Nova
+Platform	        AWS Bedrock
+Language	        Python
+
+---
+
 🚀 Features
 
-Multimodal PDF ingestion (text, tables, images)
+-Multimodal PDF ingestion (text, tables, images)
 
-Recursive text chunking with overlap
+-Recursive text chunking with overlap
 
-FAISS-based vector similarity search
+-FAISS-based vector similarity search
 
-Amazon Bedrock Nova integration
+-Amazon Bedrock Nova integration
 
-Vision + text grounded generation
+-Vision + text grounded generation
 
-Robust handling of noisy, real-world PDFs
+-Robust handling of noisy, real-world PDFs
+
+---
 
 📌 Design Choices
 
-RAG-only (no agents) → predictable, debuggable behavior
+-RAG-only (no agents)
 
-FAISS (local) → fast iteration & cost control
+-Predictable behavior
 
-Modality-aware ingestion → better grounding and fewer hallucinations
+-Easier debugging and evaluation
+
+-FAISS (local vector store)
+
+-Fast iteration cycles
+
+-Lower cost compared to managed vector DBs
+
+-Modality-aware ingestion
+
+-Better grounding
+
+-Reduced hallucinations
+
+-Improved retrieval quality
+
+---
