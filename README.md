@@ -1,4 +1,4 @@
-#Multimodal RAG on AWS (Bedrock + Nova)
+Multimodal RAG on AWS (Bedrock + Nova)
 
 A production-style multimodal Retrieval-Augmented Generation (RAG) system built on AWS.
 The system ingests PDFs containing text, images, and tables, embeds them using AWS Titan, retrieves relevant context via FAISS, and generates grounded answers using Amazon Nova.
@@ -21,7 +21,7 @@ The system ingests PDFs containing text, images, and tables, embeds them using A
 
 The diagram below shows both indexing-time and query-time flows, making the system easy to understand at a glance.
 
-Diagram
+```` ```mermaid ````
 flowchart LR
     %% =======================
     %% Indexing Pipeline
@@ -55,7 +55,7 @@ flowchart LR
     %% Shared Connections
     %% =======================
     V --> R
-
+ ```` ``` ````
 🧠 Architecture Walkthrough
 1. Multimodal Ingestion
 
