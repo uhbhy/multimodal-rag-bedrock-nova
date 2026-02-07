@@ -102,18 +102,6 @@ This approach minimizes hallucinations while preserving rich contextual understa
 
 ---
 
-🧰 Tech Stack
-
-Layer	            Technology
-PDF Parsing	        LangChain, PyMuPDF, Tabula
-Embeddings	        AWS Titan
-Vector Store	    FAISS
-LLM	                Amazon Nova
-Platform	        AWS Bedrock
-Language	        Python
-
----
-
 🚀 Features
 
 -Multimodal PDF ingestion (text, tables, images)
