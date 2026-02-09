@@ -45,6 +45,7 @@ end
 %% Query Pipeline
 %% =======================
 subgraph Query["🔎 Query & Generation Pipeline"]
+
     Q[User Query] --> R[Similarity Retrieval]
     R --> P[Multimodal Prompt Assembly]
     P --> N[Amazon Nova]
